@@ -14,11 +14,13 @@ def create_app():
 
     '''Initialize application'''
     db.init_app(app)
-    cors.init_app(app, supports_credentials=True)
+    cors.init_app(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
     jwt.init_app(app)
 
     '''Register Routes'''
     from .routes.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    from .routes.services import services_bp
+    app.register_blueprint(services_bp, url_prefix='/api/app')
     
     return app

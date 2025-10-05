@@ -73,7 +73,51 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [showResearchDesc, setShowResearchDesc] = useState(false);
   const [showSpeciesDesc, setShowSpeciesDesc] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
+  const [publications, setPublications] = useState([]);
+  const [username, setUsername] = useState("");
+  const [kpi, setKpi] = useState({});
 
+  useEffect (() => {
+    handlefetch();
+  }, [])
+
+  const handlefetch = async () => {
+    const BASE = 'http://127.0.0.1:5000/api/app/dashboard';
+    try{
+      setIsloading(true)
+      const res = await fetch(BASE, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        method: "GET",
+      });
+      
+      if (!res.ok) {
+        console.log(res, "Error in Response")
+      }
+
+      const data = await res.json();
+      const publications = data.messages;
+      const name = data.username;
+      const kpi_data = data.kpi;
+      setKpi(kpi_data);
+      setPublications(publications);
+      setUsername(name);
+      setIsloading(false);
+      console.log(data)
+    }
+
+    catch (e) {
+      console.log('Network Error', e) 
+    }
+
+    finally {
+      setIsloading(false)
+    }
+  }
+  
   return (
     <div className="p-6 space-y-6  min-h-screen mt-25 -z-10">
       {/* Search Bar */}
@@ -126,7 +170,7 @@ export default function Dashboard() {
         </div>
 
         <div className="ml-auto w-[45%]">
-          <h2 className="text-4xl font-bold text-green-900">Hello, User</h2>
+          <h2 className="text-4xl font-bold text-green-900">Hello, {username} </h2>
           <p className="text-green-800 font-normal text-md mt-2">
             Welcome back! Here’s your personalized dashboard.
           </p>
@@ -135,10 +179,10 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { icon: <BarChart3 size={40} />, count: 125, label: "Researchs" },
-          { icon: <Leaf size={40} />, count: 34, label: "Species Covered" },
-          { icon: <Rocket size={40} />, count: 12, label: "Missions" },
-          { icon: <Search size={40} />, count: 42, label: "Knowledge Gaps" },
+          { icon: <BarChart3 size={40} />, count:kpi?.total_publications, label: "Researchs" },
+          { icon: <Leaf size={40} />, count:kpi?.species_experimented, label: "Species Covered" },
+          { icon: <Rocket size={40} />, count:kpi?.missions_covered, label: "Missions" },
+          { icon: <Search size={40} />, count:"NaN", label: "Knowledge Gaps" },
         ].map((item, idx) => (
           <div
             key={idx}

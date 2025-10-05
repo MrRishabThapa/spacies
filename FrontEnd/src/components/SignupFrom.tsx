@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface SignupFormProps {
   onSwitch: () => void;
@@ -9,8 +10,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitch }) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [name, setName] = useState('');
+   const navigate = useNavigate();
       
-    const handleSignup = async () => {
+    const handleSignup = async (e) => {
+      e.preventDefault()
       const api = 'http://127.0.0.1:5000/api/auth/register'
       try {
         setisLoading(true);
@@ -31,7 +34,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitch }) => {
         const data = await res.json();
         const token = data.token;
         console.log(token)
+        localStorage.setItem('token', token)
         setisLoading(false)
+        navigate('/dashboard')
   
       }
       catch (e) {
@@ -66,7 +71,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitch }) => {
       <button
         type="submit"
         className="w-full bg-[#5e8b22] hover:bg-[#3b5220] text-white font-medium py-2 rounded-md mt-4"
-        onClick={() => handleSignup()}
+        onClick={(e) => handleSignup(e)}
       >
         Sign Up
       </button>

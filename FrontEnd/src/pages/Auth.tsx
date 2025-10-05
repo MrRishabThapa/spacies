@@ -5,6 +5,7 @@ import SignupForm from "../components/SignupFrom";
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
 
+
   return (
     <div className="flex min-h-screen w-full">
       <div className="hidden relative md:flex w-2/5 bg-[#b7d9a3]">
@@ -45,7 +46,7 @@ const Auth: React.FC = () => {
 
         <div className="w-full max-w-lg">
           {isLogin ? (
-            <LoginForm onSwitch={() => setIsLogin(false)} />
+            <LoginForm onSwitch={() => setIsLogin(false)}/>
           ) : (
             <SignupForm onSwitch={() => setIsLogin(true)} />
           )}

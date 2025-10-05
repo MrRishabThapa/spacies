@@ -1,4 +1,74 @@
 @import "tailwindcss";
 body {
-  background: #b7d9a3;
+  font-family: "poppins", "sans-serif";
+  scroll-behavior: smooth;
+}
+
+.wow-dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #e6f7e6; /* Very light green/off-white base color */
+  position: relative;
+  overflow: hidden;
+}
+.glassmorphism-card {
+  /* Base Glass Effect */
+  background: rgba(255, 255, 255, 0.25); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* THE FROSTED GLASS EFFECT */
+  -webkit-backdrop-filter: blur(
+    10px
+  ); /* Vendor prefix for browser compatibility */
+
+  /* Depth and Border */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18); /* Light, defining border */
+
+  /* Soft Shadow / Glow */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Subtle green glow */
+
+  /* Interaction (Wow Factor) */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 20px; /* Base padding for content inside the card */
+}
+
+.glassmorphism-card:hover {
+  transform: translateY(-5px); /* Card lifts slightly on hover */
+  box-shadow: 0 12px 40px 0 rgba(49, 69, 49, 0.5); /* Stronger glow on hover */
+}
+
+.background-texture-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  /* GRADIENT: Core light green gradient for depth */
+  background: linear-gradient(
+    135deg,
+    #90ee90 0%,
+    /* Deeper green for the start of the gradient */ #a9e7a9 50%,
+    /* Main light green tone */ #e6f7e6 100%
+      /* Fades down to the container's base color */
+  );
+
+  /* SHAPE PATTERN: Uses repeating gradients to simulate abstract dots/shapes */
+  background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.2),
+      /* Subtle white transparency pattern */ rgba(255, 255, 255, 0.2) 2px,
+      transparent 2px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(144, 238, 144, 0.3),
+      /* Subtle green transparency pattern */ rgba(144, 238, 144, 0.3) 2px,
+      transparent 2px,
+      transparent 30px
+    );
+  background-size: 50px 50px;
+
+  /* Subtle blur and shadow for a professional, floating effect */
+  filter: blur(0.5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }

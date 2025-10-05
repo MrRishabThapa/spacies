@@ -7,11 +7,11 @@ const Auth: React.FC = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      <div className="hidden md:flex w-2/5 bg-[#b7d9a3]">
+      <div className="hidden relative md:flex w-2/5 bg-[#b7d9a3]">
         <img
-          src="../public/auth.jpg"
+          src="../public/auth.svg"
           alt="Auth Illustration"
-          className="w-full h-full object-cover"
+          className="w-full h-[80%]  absolute top-[15%] -right-[15%] "
         />
       </div>
 

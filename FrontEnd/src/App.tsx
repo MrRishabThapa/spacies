@@ -7,6 +7,9 @@ import {
 import Navbar from "./components/NavBar";
 import Hero from "./pages/Hero";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import LatestNews from "./pages/News";
+import Chatbot from "./pages/ChatBot";
 
 const AppContent = () => {
   const location = useLocation();
@@ -18,13 +21,9 @@ const AppContent = () => {
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Hero />} />
-        <Route path="/about" element={<div className="p-10">About Page</div>} />
-        <Route
-          path="/dashboard"
-          element={<div className="p-10">Dashboard Page</div>}
-        />
-        <Route path="/Ai" element={<div className="p-10">AI Page</div>} />
-        <Route path="/news" element={<div className="p-10">News Page</div>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/Ai" element={<Chatbot />} />
+        <Route path="/news" element={<LatestNews />} />
         <Route path="/signup" element={<Auth />} />
       </Routes>
     </>

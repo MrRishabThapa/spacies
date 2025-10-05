@@ -1,39 +1,47 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import About from "./About";
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative w-full h-screen flex items-center ">
-      <div className="max-w-8xl ml-20 mx-auto w-full flex flex-col md:flex-row items-center justify-between px-6 md:px-12">
-        <div className="flex-1 mt-20 text-left">
-          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-[#3B5220] mb-8">
+    <div className="w-full overflow-x-hidden overflow-y-hidden">
+      {/* ===== HERO SECTION (1st 100vh) ===== */}
+      <section
+        style={{ fontFamily: "Poppins, sans-serif" }}
+        className="relative w-full h-screen flex flex-col items-center justify-center text-center bg-white"
+      >
+        <div>
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight text-[#3B5220] mb-8">
             Accelerating <br /> Space Biology Research
           </h1>
-          <p className="text-[#5E8B22]-600 text-xl mb-10 max-w-md">
-            Interactive dashboards, AI-powered insights, and knowledge
-            graphs—built to make NASA’s plant research accessible for
-            scientists, educators, and explorers
+          <p className="text-[#5E8B22]-600 w-[80%] text-sm md:text-md md:w-[55%] m-auto">
+            Interactive dashboards, AI-powered insights, and knowledge graphs—
+            built to make NASA’s plant research accessible for scientists,
+            educators, and explorers.
           </p>
 
-          <div className="flex gap-4">
-            <button className="px-8 py-4 bg-black text-white rounded-md font-semibold hover:bg-gray-900 transition">
-              Learn More
-            </button>
-
+          <div className="mt-6">
             <Link
               to="/signup"
-              className="px-8 py-4 border border-black rounded-md font-semibold hover:bg-gray-100 transition"
+              className="px-8 mr-3 py-2 text-[#b7d9a3] bg-[#19191E] border border-[#19191E] rounded-md font-semibold hover:bg-[#b7d9a3] hover:text-[#19191E] transition"
             >
               Get Started
             </Link>
-          </div>
-
-          <div className="flex-1 flex justify-center md:justify-end h-full">
-            <img src="/dna.svg" alt="DNA" className="h-full object-contain" />
+            <Link
+              to="/"
+              className="px-8 py-2 bg-[#b7d9a3] border border-black rounded-md font-normal hover:bg-black/50 hover:text-[#b7d9a3] transition"
+            >
+              Learn More
+            </Link>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ===== ABOUT SECTION (2nd 100vh) ===== */}
+      <section className="h-screen w-full">
+        <About />
+      </section>
+    </div>
   );
 };
 

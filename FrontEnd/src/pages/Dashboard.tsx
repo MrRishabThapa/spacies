@@ -42,6 +42,7 @@ const radarData = [
   { subject: "Cell Bio", Knowledge: 60, Gaps: 85 },
   { subject: "Pathology", Knowledge: 75, Gaps: 100 },
 ];
+
 type CounterProps = {
   end: number;
   duration?: number;
@@ -69,57 +70,70 @@ function Counter({ end, duration = 1500 }: CounterProps) {
   return <span>{count}</span>;
 }
 
+// Define proper type for KPI
+type KpiType = {
+  total_publications: number;
+  species_experimented: number;
+  missions_covered: number;
+};
+
 export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [showResearchDesc, setShowResearchDesc] = useState(false);
   const [showSpeciesDesc, setShowSpeciesDesc] = useState(false);
-  const [isLoading, setIsloading] = useState(false);
-  const [publications, setPublications] = useState([]);
   const [username, setUsername] = useState("");
-  const [kpi, setKpi] = useState({});
+  const [kpi, setKpi] = useState<KpiType>({
+    total_publications: 0,
+    species_experimented: 0,
+    missions_covered: 0,
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect (() => {
+  useEffect(() => {
     handlefetch();
-  }, [])
+  }, []);
 
   const handlefetch = async () => {
-    const BASE = 'http://127.0.0.1:5000/api/app/dashboard';
-    try{
-      setIsloading(true)
+    const BASE = "http://127.0.0.1:5000/api/app/dashboard";
+    try {
+      setIsLoading(true);
       const res = await fetch(BASE, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         method: "GET",
       });
-      
+
       if (!res.ok) {
-        console.log(res, "Error in Response")
+        console.log(res, "Error in Response");
+        return;
       }
 
       const data = await res.json();
-      const publications = data.messages;
-      const name = data.username;
       const kpi_data = data.kpi;
-      setKpi(kpi_data);
-      setPublications(publications);
-      setUsername(name);
-      setIsloading(false);
-      console.log(data)
-    }
 
-    catch (e) {
-      console.log('Network Error', e) 
+      setKpi({
+        total_publications: kpi_data.total_publications || 0,
+        species_experimented: kpi_data.species_experimented || 0,
+        missions_covered: kpi_data.missions_covered || 0,
+      });
+      setUsername(data.username);
+    } catch (e) {
+      console.log("Network Error", e);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    finally {
-      setIsloading(false)
-    }
-  }
-  
   return (
-    <div className="p-6 space-y-6  min-h-screen mt-25 -z-10">
+    <div className="p-6 space-y-6 min-h-screen mt-25 -z-10">
+      {isLoading && (
+        <div className="text-center text-green-900 font-bold mb-4">
+          Loading...
+        </div>
+      )}
+
       {/* Search Bar */}
       <div className="w-3/5 mx-auto">
         <div className="flex items-center gap-2 glassmorphism-card bg-green-50 border rounded-lg p-3">
@@ -134,9 +148,11 @@ export default function Dashboard() {
           />
         </div>
       </div>
-      <div className=" z-100 bg-transparent w-[30%] h-20 mx-auto flex flex-column justify-evenly gap-2 rounded-lg md:w-[40%] space-y-1">
-        <div className=" z-100 flex gap-1">
-          <div className=" z-100 flex md:gap-2">
+
+      {/* Filters */}
+      <div className="z-100 bg-transparent w-[30%] h-20 mx-auto flex flex-col justify-evenly gap-2 rounded-lg md:w-[40%] space-y-1">
+        <div className="z-100 flex gap-1">
+          <div className="z-100 flex md:gap-2">
             <select className="w-20 h-10 p-2 border rounded md:w-40">
               <option>Select Species</option>
               <option>Human</option>
@@ -156,33 +172,49 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      {/* User + Filters */}
+
+      {/* User Greeting */}
       <div
         style={{ fontFamily: "Poppins, sans-serif" }}
         className="w-[80%] h-65 mx-auto glassmorphism-card md:w-[40%] rounded-lg shadow p-6 flex items-center gap-4 relative"
       >
-        <div className="absolute  top-5 left-5 md:-top-25 md:-left-25">
+        <div className="absolute top-5 left-5 md:-top-25 md:-left-25">
           <img
             src="./user.svg"
             alt="User Avatar"
-            className="w-70 h-70 drop-shadow-2xl transform hover:scale-110 transition duration-300 md:w-130 md:h-130  "
+            className="w-70 h-70 drop-shadow-2xl transform hover:scale-110 transition duration-300 md:w-130 md:h-130"
           />
         </div>
 
         <div className="ml-auto w-[45%]">
-          <h2 className="text-4xl font-bold text-green-900">Hello, {username} </h2>
+          <h2 className="text-4xl font-bold text-green-900">
+            Hello, {username}
+          </h2>
           <p className="text-green-800 font-normal text-md mt-2">
             Welcome back! Here’s your personalized dashboard.
           </p>
         </div>
       </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { icon: <BarChart3 size={40} />, count:kpi?.total_publications, label: "Researchs" },
-          { icon: <Leaf size={40} />, count:kpi?.species_experimented, label: "Species Covered" },
-          { icon: <Rocket size={40} />, count:kpi?.missions_covered, label: "Missions" },
-          { icon: <Search size={40} />, count:"NaN", label: "Knowledge Gaps" },
+          {
+            icon: <BarChart3 size={40} />,
+            count: kpi.total_publications,
+            label: "Researchs",
+          },
+          {
+            icon: <Leaf size={40} />,
+            count: kpi.species_experimented,
+            label: "Species Covered",
+          },
+          {
+            icon: <Rocket size={40} />,
+            count: kpi.missions_covered,
+            label: "Missions",
+          },
+          { icon: <Search size={40} />, count: 0, label: "Knowledge Gaps" },
         ].map((item, idx) => (
           <div
             key={idx}
@@ -197,6 +229,7 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Research Over Time */}
@@ -216,17 +249,12 @@ export default function Dashboard() {
               <Line type="monotone" dataKey="value" stroke="#2f4f2f" dot />
             </LineChart>
           </ResponsiveContainer>
-
-          {/* Desktop Hover */}
+          {/* Description for desktop & mobile */}
           <div className="hidden sm:block">
             <div className="max-h-0 overflow-hidden opacity-0 group-hover:max-h-40 group-hover:opacity-100 transition-all duration-500 ease-in-out mt-3 glassmorphism-card border rounded-lg p-3">
-              <p style={{ fontFamily: "Poppins, sans-serif" }}>
-                This graph illustrates research Research trend over time,
-                showing how contributions have evolved across different years.
-              </p>
+              <p>This graph illustrates research trend over time.</p>
             </div>
           </div>
-          {/* Mobile Click */}
           <div className="block sm:hidden">
             <button
               onClick={() => setShowResearchDesc(!showResearchDesc)}
@@ -236,10 +264,7 @@ export default function Dashboard() {
             </button>
             {showResearchDesc && (
               <div className="mt-3 bg-white border rounded-lg p-3 text-sm">
-                <p style={{ fontFamily: "Poppins, sans-serif" }}>
-                  This graph illustrates research Research trend over time,
-                  showing how contributions have evolved across different years.
-                </p>
+                <p>This graph illustrates research trend over time.</p>
               </div>
             )}
           </div>
@@ -248,8 +273,8 @@ export default function Dashboard() {
         {/* Species Distribution */}
         <div className="glassmorphism-card border rounded-lg p-4 group">
           <h3
-            style={{ fontFamily: "Poppins, sans-serif" }}
             className="font-semibold text-green-900 text-3xl mb-2"
+            style={{ fontFamily: "Poppins, sans-serif" }}
           >
             Species Distribution
           </h3>
@@ -264,7 +289,7 @@ export default function Dashboard() {
                 paddingAngle={5}
                 dataKey="value"
               >
-                {speciesData.map((entry, index) => (
+                {speciesData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -286,17 +311,15 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Desktop Hover */}
+          {/* Description */}
           <div className="hidden sm:block">
             <div className="max-h-0 overflow-hidden opacity-0 group-hover:max-h-40 group-hover:opacity-100 transition-all duration-500 ease-in-out mt-3 glassmorphism-card border rounded-lg p-3">
-              <p style={{ fontFamily: "Poppins, sans-serif" }}>
+              <p>
                 This chart shows the proportional distribution of different
-                species, helping visualize biodiversity and species dominance in
-                the dataset.
+                species.
               </p>
             </div>
           </div>
-          {/* Mobile Click */}
           <div className="block sm:hidden">
             <button
               onClick={() => setShowSpeciesDesc(!showSpeciesDesc)}
@@ -306,21 +329,21 @@ export default function Dashboard() {
             </button>
             {showSpeciesDesc && (
               <div className="mt-3 bg-white border rounded-lg p-3 text-sm">
-                <p style={{ fontFamily: "Poppins, sans-serif" }}>
+                <p>
                   This chart shows the proportional distribution of different
-                  species, helping visualize biodiversity and species dominance
-                  in the dataset.
+                  species.
                 </p>
               </div>
             )}
           </div>
         </div>
       </div>
+
       {/* Radar Chart */}
       <div className="glassmorphism-card border rounded-lg p-4">
         <h3
-          style={{ fontFamily: "Poppins, sans-serif" }}
           className="font-semibold text-green-900 text-3xl mb-2"
+          style={{ fontFamily: "Poppins, sans-serif" }}
         >
           Knowledge vs Gaps
         </h3>
@@ -347,7 +370,6 @@ export default function Dashboard() {
           </RadarChart>
         </ResponsiveContainer>
       </div>
-      {/* Publications */};
     </div>
   );
 }
